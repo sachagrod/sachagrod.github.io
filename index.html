@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sacha Grodzinski</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout idea: one wide left-aligned column on white; oversized light serif statements,
+     small sans body, hairline rules between sections. Single light theme by choice. */
+  :root {
+    color-scheme: light;
+    --paper: #ffffff;
+    --ink: #111214;
+    --muted: #5d6066;
+    --rule: #d9dadd;
+    --navy: #1f3a68;      /* picked from the blazer in the headshot */
+    --wash: #f4f6f9;
+    --display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+    --body: "Karla", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 3px;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
+
+  /* Header */
+  header.site { padding: 28px 0; }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .mark {
+    font-family: var(--display); font-size: 1.9rem; font-weight: 500; letter-spacing: 0.02em;
+    text-decoration: none; line-height: 1;
+  }
+  nav { display: flex; gap: 28px; }
+  nav a { text-decoration: none; font-size: 0.98rem; padding-bottom: 2px; border-bottom: 1px solid transparent; }
+  nav a:hover, nav a[aria-current="page"] { border-bottom-color: var(--ink); }
+
+  /* Views */
+  .view { display: none; }
+  .view.is-active { display: block; }
+
+  /* Hero */
+  .hero { padding: clamp(28px, 6vw, 72px) 0 clamp(40px, 6vw, 72px); }
+  .headshot {
+    width: 220px; height: 220px; border-radius: 50%; object-fit: cover;
+    margin-bottom: clamp(28px, 4vw, 44px);
+  }
+  h1 {
+    font-family: var(--display); font-weight: 300;
+    font-size: clamp(2.1rem, 5vw, 4rem); line-height: 1.14; letter-spacing: -0.005em;
+    margin: 0; max-width: 21em; text-wrap: balance;
+  }
+  h1 a {
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.14em;
+    transition: color .2s;
+  }
+  h1 a:hover { color: var(--navy); }
+  .sub {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(1.25rem, 2.1vw, 1.65rem); line-height: 1.45;
+    color: var(--muted); margin: clamp(22px, 3vw, 34px) 0 0; max-width: 40em;
+  }
+
+  /* CV card */
+  .cv-card {
+    display: grid; grid-template-columns: 84px 1fr auto; align-items: center; gap: 24px;
+    max-width: 640px; padding: 18px 24px 18px 18px;
+    border: 1px solid var(--ink); text-decoration: none;
+    transition: background .2s, color .2s;
+  }
+  .cv-card .thumb {
+    width: 84px; height: 112px; overflow: hidden; border: 1px solid var(--rule); background: #fff;
+  }
+  .cv-card .thumb img { width: 100%; }
+  .cv-card .label { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .cv-card .name { font-family: var(--display); font-size: 1.75rem; line-height: 1.2; margin-top: 2px; }
+  .cv-card .meta { font-size: 0.92rem; color: var(--muted); margin-top: 4px; }
+  .cv-card .go { font-size: 1rem; font-weight: 500; white-space: nowrap; }
+  .cv-card .go span { display: inline-block; transition: transform .2s; }
+  .cv-card:hover { background: var(--ink); color: var(--paper); }
+  .cv-card:hover .label, .cv-card:hover .meta { color: #c9ccd2; }
+  .cv-card:hover .go span { transform: translateX(5px); }
+
+  /* Deep dive */
+  section.block { padding: clamp(48px, 7vw, 88px) 0; border-top: 1px solid var(--rule); }
+  .cv-section { padding: 0 0 clamp(48px, 7vw, 88px); }
+  h2 {
+    font-family: var(--display); font-weight: 300;
+    font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; margin: 0 0 clamp(28px, 4vw, 48px);
+  }
+  .cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(28px, 4vw, 56px); align-items: start; }
+  .col h3 {
+    font-family: var(--display); font-weight: 500; font-size: 1.6rem; line-height: 1.2;
+    margin: 0 0 14px; padding-top: 16px; border-top: 1px solid var(--ink);
+  }
+  .more { position: relative; overflow: hidden; max-height: 13.6em; transition: max-height .45s ease; }
+  .more p { margin: 0 0 1em; }
+  .more p:last-child { margin-bottom: 0; }
+  .more[data-open="false"] {
+    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  }
+  .toggle {
+    margin-top: 14px; padding: 0 0 2px; background: none; border: 0; border-bottom: 1px solid var(--ink);
+    font: 500 0.95rem var(--body); color: var(--ink); cursor: pointer;
+  }
+  .toggle:hover { color: var(--navy); border-bottom-color: var(--navy); }
+
+  /* CTA */
+  .cta { font-family: var(--display); font-weight: 300; font-size: clamp(2rem, 4.4vw, 3.4rem); line-height: 1.15; margin: 0; }
+  .cta a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.14em; }
+  .cta a:hover { color: var(--navy); }
+
+  /* Contact */
+  .contact { padding: clamp(28px, 6vw, 72px) 0 clamp(56px, 8vw, 96px); max-width: 900px; }
+  .contact h1 { margin-bottom: 26px; }
+  .contact .lead { margin: 0 0 34px; }
+  .contact .lead a { font-weight: 700; text-decoration: none; }
+  .contact .lead a:hover { text-decoration: underline; }
+  form { display: grid; gap: 26px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  fieldset { border: 0; padding: 0; margin: 0; }
+  legend { padding: 0; margin-bottom: 8px; font-size: 1.05rem; }
+  label { display: block; font-size: 1.05rem; }
+  label.small { font-size: 0.9rem; }
+  .req { color: var(--muted); font-size: 0.85rem; margin-left: 6px; }
+  input, textarea {
+    width: 100%; margin-top: 6px; padding: 10px 0; border: 0; border-bottom: 1px solid #6b6e74; border-radius: 0;
+    background: transparent; color: var(--ink); font: 1rem var(--body);
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  input:focus, textarea:focus { border-bottom-color: var(--navy); }
+  .send {
+    justify-self: start; padding: 16px 30px; background: var(--ink); color: var(--paper); border: 1px solid var(--ink);
+    font: 500 1.15rem var(--display); letter-spacing: 0.02em; cursor: pointer; transition: background .2s, color .2s;
+  }
+  .send:hover { background: var(--paper); color: var(--ink); }
+  .status { display: none; padding: 16px 18px; background: var(--wash); border-left: 2px solid var(--navy); font-size: 0.98rem; }
+  .status.show { display: block; }
+  .status a { font-weight: 700; }
+  .status button { margin-left: 4px; background: none; border: 0; border-bottom: 1px solid var(--ink); padding: 0; font: 500 0.95rem var(--body); cursor: pointer; color: var(--ink); }
+
+  /* CV view */
+  .cvview { padding: clamp(20px, 4vw, 48px) 0 clamp(56px, 8vw, 96px); }
+  .cvview .bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px 24px; margin-bottom: 28px; }
+  .cvview h1 { font-size: clamp(2rem, 4vw, 3rem); }
+  .back { text-decoration: none; border-bottom: 1px solid var(--ink); padding-bottom: 2px; font-size: 0.98rem; }
+  .sheet { max-width: 900px; border: 1px solid var(--rule); box-shadow: 0 18px 50px -28px rgba(17, 18, 20, .35); }
+  .sheet img { width: 100%; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--rule); padding: 32px 0 44px; font-size: 0.95rem; color: var(--muted); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; }
+  footer a { text-decoration: none; border-bottom: 1px solid currentColor; color: var(--ink); }
+
+  @media (max-width: 860px) {
+    .cols { grid-template-columns: 1fr; }
+    .more { max-height: 10.2em; }
+  }
+  @media (max-width: 520px) {
+    body { font-size: 16px; }
+    .row { grid-template-columns: 1fr; }
+    .cv-card { grid-template-columns: 64px 1fr; gap: 16px; }
+    .cv-card .thumb { width: 64px; height: 86px; }
+    .cv-card .go { grid-column: 2; }
+    .headshot { width: 160px; height: 160px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <a class="mark" href="#home" aria-label="Sacha Grodzinski, home">SG</a>
+    <nav aria-label="Main">
+      <a href="#home" data-nav="home">Home</a>
+      <a href="#contact" data-nav="contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <div class="view is-active" id="view-home">
+    <div class="wrap">
+      <div class="hero">
+        <img class="headshot" src="headshot.jpg" alt="Portrait of Sacha Grodzinski" width="220" height="220">
+        <h1>Hi, I&rsquo;m <a href="https://www.linkedin.com/in/sacha-grodzinski" target="_blank" rel="noopener">Sacha Grodzinski</a>. I am a first-class graduate from the University of Leeds. Currently, I am looking to break into a fast-growing, AI-native start-up.</h1>
+        <p class="sub">I wanted to build this website simply to evidence my proactive interest in (and ability to build with) AI. I would love to populate my page with facts about the company that I am working for (that could be yours!). Outside of work, I love to cook, read, and exercise in any and all forms.</p>
+      </div>
+
+      <div class="cv-section">
+        <a class="cv-card" href="#cv">
+          <span class="thumb"><img src="cv.png" alt=""></span>
+          <span>
+            <span class="label">Attachment</span>
+            <span class="name" style="display:block">Curriculum Vitae</span>
+            <span class="meta" style="display:block">Sacha Grodzinski &middot; November 2026 &middot; 1 page</span>
+          </span>
+          <span class="go">View my CV <span aria-hidden="true">&rarr;</span></span>
+        </a>
+      </div>
+
+      <section class="block" aria-labelledby="deep-dive">
+        <h2 id="deep-dive">A Deep Dive</h2>
+        <div class="cols">
+
+          <article class="col">
+            <h3>Something I&rsquo;ve Built</h3>
+            <div class="more" id="more-1" data-open="false">
+              <p>Although I&rsquo;ve been playing around with numerous AI models, agent builders, and app designers, there is one specific agent that I built that I want to talk about. This is an agent that I built this summer in my consulting internship at Baringa, where I sat in the enterprise value creation team as a strategy analyst.</p>
+              <p>One offering our team provided to clients was benchmarking their capability in a certain function area against their competitors and the industry standard. This process was being done manually, taking a lot of time and usually not offering very unique insight to take to the client. Seeing this process as something that could be significantly improved, I took initiative and proactively built a benchmarking agent.</p>
+              <p>Building in complex reasoning processes to create a hallucination free, high quality, and visualised output, the agent finally reached a stage where I was happy to present it to my colleagues. After showing leading AI figures in the firm how I built it and what it does, iterating it on their feedback, I then ran directors through how I used it. They gave me really positive feedback, and ended up actually using it in a live client request.</p>
+              <p>This was the first intern-led AI initiative to be used on a live client request, and I learnt the importance of addressing potential points of improvement, taking initiative, and building!</p>
+            </div>
+            <button class="toggle" type="button" aria-expanded="false" aria-controls="more-1">See more</button>
+          </article>
+
+          <article class="col">
+            <h3>What I&rsquo;m Proud Of</h3>
+            <div class="more" id="more-2" data-open="false">
+              <p>My work ethic. This is something that I have held since I first realised the level of ambition that I had when I was 17. Since then, I have focused on achieving the highest academic grades I could. The hard work first paid off when I turned my grades around, going from a B+ student to achieving straight A*&rsquo;s at A-Levels, including achieving the highest grade in the country in Human Geography.</p>
+              <p>This gave me the confidence going into university to carry on aiming high. With a solidified mentality of dedication to hard work, I achieved a first class grade in every year of university. I also achieved a High Distinction (averaging 81%) during my study abroad year at Monash University in Melbourne, which taught me valuable lessons beyond academia (but more on that later).</p>
+              <p>In my final year, I committed to one final push to finish with a strong First Class degree, which I did. I graduated as one of the top of my cohort, and received the faculty academic excellence award for my dissertation (graded 92%). My paper researched how to create a productive group environment that enables individuals to be more creative and confident in their output.</p>
+              <p>This background of academic knowledge, and work ethic that I developed, is something that I am now looking to take forward into my career.</p>
+            </div>
+            <button class="toggle" type="button" aria-expanded="false" aria-controls="more-2">See more</button>
+          </article>
+
+          <article class="col">
+            <h3>Why I Will Fit.</h3>
+            <div class="more" id="more-3" data-open="false">
+              <p>My adaptability. Over the last few years, I have been exposed to a diverse array of cultures, perspectives, and ways of working. I have studied in Leeds and Melbourne, worked in three different continents, and travelled even more in between.</p>
+              <p>This has given me the ability to adapt to any environment that I&rsquo;m put in, understanding what that local working culture is, what my team&rsquo;s communication style is, and how to build a strong relationship with those around me. This has been a unique skill that I didn&rsquo;t expect to enjoy developing as much as I did, but I guess me continuing to seek new experiences speaks for itself!</p>
+              <p>This flexibility and adaptability to whatever team and environment I am put in has allowed me to excel in all of these roles, and will allow me to fit in to whatever company I join next!</p>
+            </div>
+            <button class="toggle" type="button" aria-expanded="false" aria-controls="more-3">See more</button>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="block">
+        <p class="cta">Want more? <a href="#contact">Let&rsquo;s chat &rarr;</a></p>
+      </section>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="view" id="view-contact">
+    <div class="wrap">
+      <div class="contact">
+        <h1>Let&rsquo;s chat!</h1>
+        <p class="lead">Fill out the form below or email me at <a href="mailto:sachagrod@gmail.com">sachagrod@gmail.com</a></p>
+        <form id="contact-form" novalidate>
+          <fieldset>
+            <legend>Name</legend>
+            <div class="row">
+              <label class="small" for="first-name">First Name <span class="req">(required)</span>
+                <input id="first-name" name="first" type="text" autocomplete="given-name" required>
+              </label>
+              <label class="small" for="last-name">Last Name <span class="req">(required)</span>
+                <input id="last-name" name="last" type="text" autocomplete="family-name" required>
+              </label>
+            </div>
+          </fieldset>
+          <label for="email">Email <span class="req">(required)</span>
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </label>
+          <label for="message">Message <span class="req">(required)</span>
+            <textarea id="message" name="message" required></textarea>
+          </label>
+          <button class="send" type="submit">Send</button>
+          <div class="status" id="form-status" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CV -->
+  <div class="view" id="view-cv">
+    <div class="wrap">
+      <div class="cvview">
+        <div class="bar">
+          <h1>Curriculum Vitae</h1>
+          <span style="display:flex;gap:24px;flex-wrap:wrap"><a class="back" href="Sacha_Grodzinski_CV.pdf" download>Download PDF &darr;</a><a class="back" href="#home">&larr; Back to home</a></span>
+        </div>
+        <div class="sheet">
+          <img src="cv.png" alt="CV of Sacha Grodzinski. Work experience: Strategy Consultant Intern at Baringa, London (July to August 2026); Sales Associate at HelloFresh, Melbourne (February to June 2025); Business Analyst Intern at OneBeat, Tel Aviv (June to August 2024); Chef de Partie at Moro Restaurant, London (May 2021 to February 2022). Education: BSc Psychology, First Class, University of Leeds, with a study year abroad at Monash University; A-Levels in Psychology, Geography and Economics, all A*, at University College School.">
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Sacha Grodzinski 2026</span>
+    <span><a href="https://www.linkedin.com/in/sacha-grodzinski" target="_blank" rel="noopener">LinkedIn</a></span>
+  </div>
+</footer>
+
+<script>
+  // --- Views, routed on a plain hash (#home, #contact, #cv) ---
+  var views = ['home', 'contact', 'cv'];
+  function route() {
+    var name = (location.hash || '').replace('#', '');
+    if (views.indexOf(name) === -1) name = 'home';
+    views.forEach(function (v) {
+      document.getElementById('view-' + v).classList.toggle('is-active', v === name);
+    });
+    document.querySelectorAll('nav a').forEach(function (a) {
+      if (a.dataset.nav === name) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+  route();
+
+  // --- See more / See less ---
+  document.querySelectorAll('.toggle').forEach(function (btn) {
+    var box = document.getElementById(btn.getAttribute('aria-controls'));
+    btn.addEventListener('click', function () {
+      var open = box.dataset.open === 'true';
+      if (open) {
+        box.style.maxHeight = '';
+        box.dataset.open = 'false';
+      } else {
+        box.style.maxHeight = box.scrollHeight + 'px';
+        box.dataset.open = 'true';
+      }
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.textContent = open ? 'See more' : 'See less';
+    });
+  });
+  window.addEventListener('resize', function () {
+    document.querySelectorAll('.more[data-open="true"]').forEach(function (box) {
+      box.style.maxHeight = box.scrollHeight + 'px';
+    });
+  });
+
+  // --- Contact form: opens the visitor's email app with the message drafted ---
+  var form = document.getElementById('contact-form');
+  var statusBox = document.getElementById('form-status');
+  var ADDRESS = 'sachagrod@gmail.com';
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var first = form.first.value.trim(), last = form.last.value.trim();
+    var email = form.email.value.trim(), message = form.message.value.trim();
+    statusBox.classList.add('show');
+    if (!first || !last || !email || !message) {
+      statusBox.textContent = 'Please fill in your first name, last name, email and message.';
+      return;
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      statusBox.textContent = 'That email address looks incomplete. Please check it and try again.';
+      return;
+    }
+    var text = message + '\n\n' + first + ' ' + last + '\n' + email;
+    var link = document.createElement('a');
+    link.href = 'mailto:' + ADDRESS + '?subject=' + encodeURIComponent('Hello from ' + first + ' ' + last) +
+                '&body=' + encodeURIComponent(text);
+    link.target = '_blank';
+    link.rel = 'noopener';
+    document.body.appendChild(link);
+    try { link.click(); } catch (err) {}
+    link.remove();
+
+    statusBox.innerHTML = 'Your email app should open with this message ready to send. If nothing opens, email me at ' +
+      '<a href="mailto:' + ADDRESS + '">' + ADDRESS + '</a>. <button type="button" id="copy-msg">Copy my message</button>';
+    document.getElementById('copy-msg').addEventListener('click', function () {
+      var b = this;
+      navigator.clipboard.writeText(text).then(
+        function () { b.textContent = 'Copied'; },
+        function () { b.textContent = 'Copy failed, please select the text above'; }
+      );
+    });
+  });
+</script>
+</body>
+</html>
